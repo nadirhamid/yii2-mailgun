@@ -74,17 +74,19 @@ class Mailer extends BaseMailer
     protected function sendMessage($message)
     {
         Yii::info('Sending email', __METHOD__);
-				$to = $message->getTo();
-				$subject = $message->getSubject();
-				$body = $message->getHtmlBody();
-				$from = $message->getFrom();
-
-				$this->getMailgun()->send($this->domain, [
-					'from'    => $from,
-					'to'      => $to,
-					'subject' => $subject,
-					'text'    => $body
-				]);
+	$to = $message->getTo();
+	$subject = $message->getSubject();
+	$body = $message->getMessageBuilder()->getMessage();
+	$from = $message->getFrom();
+	$fromKeys = array_keys( $from );
+	$fromEmail = $fromKeys[ 0 ];
+	$params = [
+		'from'    => $fromEmail,
+		'to'      => $to[0],
+		'subject' => $subject,
+		'html'    => $body['html']
+	];
+	$this->getMailgun()->messages()->send($this->domain, $params);
 
         return true;
     }

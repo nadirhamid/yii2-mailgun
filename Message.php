@@ -52,7 +52,7 @@ class Message extends BaseMessage
      */
     public function getFrom()
     {
-        return null;
+        return $this->from;
     }
 
     /**
@@ -68,6 +68,7 @@ class Message extends BaseMessage
             $this->getMessageBuilder()->setFromAddress($from);
         }
 
+	$this->from = $from;
         return $this;
     }
 
