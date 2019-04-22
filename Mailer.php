@@ -74,12 +74,19 @@ class Mailer extends BaseMailer
     protected function sendMessage($message)
     {
         Yii::info('Sending email', __METHOD__);
+				$to = $message->getTo();
+				$subject = $message->getSubject();
+				$body = $message->getHtmlBody();
+				$from = $message->getFrom();
 
-        $this->getMailgun()->post("{$this->domain}/messages",
-            $message->getMessageBuilder()->getMessage(),
-            $message->getMessageBuilder()->getFiles());
+				$this->getMailgun()->send($this->domain, [
+					'from'    => $from,
+					'to'      => $to,
+					'subject' => $subject,
+					'text'    => $body
+				]);
 
-         return true;
+        return true;
     }
 
     /**
@@ -95,6 +102,6 @@ class Mailer extends BaseMailer
         if (!$this->domain) {
             throw new InvalidConfigException('Mailer::domain must be set.');
         }
-        return new Mailgun($this->key);
+        return Mailgun::create($this->key);
     }
 }
